@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.oneandone.ioc-unit</groupId>
         <artifactId>ioc-unit-parent</artifactId>
-        <version>2.0.31-SNAPSHOT</version>
+        <version>2.0.43-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -12,7 +12,7 @@
 
     <name>net.oneandone.ioc-unit:ioc-unit-analyzer</name>
     <description>A module that can be used together with cdiunit to build en ejb-test-environment.</description>
-    <url>https://github.com/1and1/ioc-unit</url>
+    <url>https://github.com/1and1/modules/ioc-unit-analyzer</url>
 
     <licenses>
         <license>
@@ -26,10 +26,27 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.7.1</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.105</version>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -70,6 +87,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.0.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.oneandone.ioc-unit</groupId>
+            <artifactId>weld2-starter</artifactId>
+            <version>2.0.37</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

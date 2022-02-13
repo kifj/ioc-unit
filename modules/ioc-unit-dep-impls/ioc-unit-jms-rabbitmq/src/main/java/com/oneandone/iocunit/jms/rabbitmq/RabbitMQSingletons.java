@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.melowe.jms2.compat.Jms2ConnectionFactory;
 import com.melowe.jms2.compat.Jms2Message;
 import com.melowe.jms2.compat.Jms2MessageListener;
-import com.oneandone.iocunit.ejb.jms.JmsSingletonsIntf;
+import com.oneandone.iocunit.jms.JmsSingletonsIntf;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 
@@ -56,7 +56,7 @@ public class RabbitMQSingletons implements JmsSingletonsIntf {
             getConnectionFactory();
 
         } catch (Exception e) {
-            if (rabbitMq == null) {
+            if(rabbitMq == null) {
                 EmbeddedRabbitMqConfig config = new EmbeddedRabbitMqConfig.Builder()
                         .rabbitMqServerInitializationTimeoutInMillis(10000)
                         .build();
@@ -64,7 +64,7 @@ public class RabbitMQSingletons implements JmsSingletonsIntf {
                 rabbitMq = new EmbeddedRabbitMq(config);
                 rabbitMq.start();
                 try {
-                    final Connection connection =  this.connectionFactoryAtomicReference.get().createConnection();
+                    final Connection connection = this.connectionFactoryAtomicReference.get().createConnection();
                     connection.start();
                     destinations.set(new ConcurrentHashMap<>());
                     mdbConnection.set(connection);
@@ -72,7 +72,8 @@ public class RabbitMQSingletons implements JmsSingletonsIntf {
                 } catch (Exception embedding) {
                     throw new RuntimeException(embedding);
                 }
-            } else {
+            }
+            else {
                 throw new RuntimeException(e);
             }
         }
@@ -104,10 +105,9 @@ public class RabbitMQSingletons implements JmsSingletonsIntf {
     }
 
 
-
     @Override
     public Queue createQueue(String name) {
-        if (!destinations.get().containsKey(name)) {
+        if(!destinations.get().containsKey(name)) {
             destinations.get().put(name, new RMQDestination(name, true, true));
         }
         return (Queue) destinations.get().get(name);
@@ -115,7 +115,7 @@ public class RabbitMQSingletons implements JmsSingletonsIntf {
 
     @Override
     public Topic createTopic(String name) {
-        if (!destinations.get().containsKey(name)) {
+        if(!destinations.get().containsKey(name)) {
             destinations.get().put(name, new RMQDestination(name, false, true));
         }
         return (Topic) destinations.get().get(name);

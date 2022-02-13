@@ -69,7 +69,7 @@ class Phase1Analyzer extends PhasesBase {
                 }
             }
         } catch (NoClassDefFoundError e) {
-            logger.warn("{} searching innerclasses of {}",e.getMessage(), c.getName());
+            logger.warn("{} searching innerclasses of {}", e.getMessage(), c.getName());
         }
     }
 
@@ -125,31 +125,32 @@ class Phase1Analyzer extends PhasesBase {
                         .map(a -> c1.getAnnotation((Class<? extends Annotation>) (a)))
                         .filter(res -> res != null)
                         .forEach(res -> extraClassAnnotations.get(((Annotation) res).annotationType())
-                                .handleExtraClassAnnotation(res, c1));
+                                .handleExtraClassAnnotation(res, c1)
+                                .forEach(extraAnnotated -> configuration.candidate(extraAnnotated)));
             });
         }
     }
 
-    private void addPackages(Class<?>[] packages, boolean isSut) throws MalformedURLException {
+    private void addPackages(Class<?>[] packages, boolean isSut, String filterRegex) throws MalformedURLException {
         for (Class<?> packageClass : packages) {
             Set<Class<?>> tmpClasses = new HashSet<>();
-            ClasspathHandler.addPackage(packageClass, tmpClasses);
+            ClasspathHandler.addPackage(packageClass, tmpClasses, filterRegex);
             addAvailables(isSut, tmpClasses);
         }
     }
 
-    private void addPackagesDeep(Class<?>[] packages, boolean isSut) throws MalformedURLException {
+    private void addPackagesDeep(Class<?>[] packages, boolean isSut, String filterRegex) throws MalformedURLException {
         for (Class<?> packageClass : packages) {
             Set<Class<?>> tmpClasses = new HashSet<>();
-            ClasspathHandler.addPackageDeep(packageClass, tmpClasses);
+            ClasspathHandler.addPackageDeep(packageClass, tmpClasses, filterRegex);
             addAvailables(isSut, tmpClasses);
         }
     }
 
-    private void addClasspaths(Class<?>[] classpaths, boolean isSut) throws MalformedURLException {
+    private void addClasspaths(Class<?>[] classpaths, boolean isSut, String filterRegex) throws MalformedURLException {
         for (Class<?> classpathClass : classpaths) {
             Set<Class<?>> tmpClasses = new HashSet<>();
-            ClasspathHandler.addClassPath(classpathClass, tmpClasses);
+            ClasspathHandler.addClassPath(classpathClass, tmpClasses, filterRegex);
             addAvailables(isSut, tmpClasses);
         }
     }
@@ -185,8 +186,8 @@ class Phase1Analyzer extends PhasesBase {
     }
 
     private boolean isObligatoryAccordingToCandidateSigns(final Class<?> c) {
-        return  !configuration.isExcluded(c) && !configuration.isCandidate(c) && configuration.isSuTClass(c) &&
-                configuration.getCandidateSigns().stream().anyMatch(cs -> cs.isAssignableFrom(c) || cs.isAnnotation() && c.isAnnotationPresent((Class<Annotation>)cs));
+        return !configuration.isExcluded(c) && !configuration.isCandidate(c) && configuration.isSuTClass(c) &&
+               configuration.getCandidateSigns().stream().anyMatch(cs -> cs.isAssignableFrom(c) || cs.isAnnotation() && c.isAnnotationPresent((Class<Annotation>) cs));
     }
 
     public void extend(final Set<Class<?>> tmpClasses, boolean isSut) {
@@ -194,10 +195,12 @@ class Phase1Analyzer extends PhasesBase {
             if(c.isInterface() || c.isAnnotation() || Modifier.isAbstract(c.getModifiers())) {
                 continue;
             }
-            if (isSut)
+            if(isSut) {
                 configuration.sutClass(c);
-            else
+            }
+            else {
                 configuration.testClass(c);
+            }
             if(isObligatoryAccordingToServices(c)) {
                 configuration.candidate(c);
             }
@@ -213,19 +216,19 @@ class Phase1Analyzer extends PhasesBase {
             try {
                 SutPackages sutPackages = c1.getAnnotation(SutPackages.class);
                 if(sutPackages != null) {
-                    addPackages(sutPackages.value(), true);
+                    addPackages(sutPackages.value(), true, sutPackages.filteringRegex());
                 }
                 TestPackages testPackages = c1.getAnnotation(TestPackages.class);
                 if(testPackages != null) {
-                    addPackages(testPackages.value(), false);
+                    addPackages(testPackages.value(), false, testPackages.filteringRegex());
                 }
                 SutPackagesDeep sutPackagesDeep = c1.getAnnotation(SutPackagesDeep.class);
                 if(sutPackagesDeep != null) {
-                    addPackagesDeep(sutPackagesDeep.value(), true);
+                    addPackagesDeep(sutPackagesDeep.value(), true, sutPackagesDeep.filteringRegex());
                 }
                 TestPackagesDeep testPackagesDeep = c1.getAnnotation(TestPackagesDeep.class);
                 if(testPackagesDeep != null) {
-                    addPackagesDeep(testPackagesDeep.value(), false);
+                    addPackagesDeep(testPackagesDeep.value(), false, testPackagesDeep.filteringRegex());
                 }
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
@@ -238,11 +241,11 @@ class Phase1Analyzer extends PhasesBase {
             try {
                 SutClasspaths sutClasspaths = c1.getAnnotation(SutClasspaths.class);
                 if(sutClasspaths != null) {
-                    addClasspaths(sutClasspaths.value(), true);
+                    addClasspaths(sutClasspaths.value(), true, sutClasspaths.filteringRegex());
                 }
                 TestClasspaths testClasspaths = c1.getAnnotation(TestClasspaths.class);
                 if(testClasspaths != null) {
-                    addClasspaths(testClasspaths.value(), false);
+                    addClasspaths(testClasspaths.value(), false, sutClasspaths.filteringRegex());
                 }
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
@@ -302,7 +305,8 @@ class Phase1Analyzer extends PhasesBase {
         for (Annotation ann : annotations) {
             if(ann.annotationType().equals(Produces.class)) {
                 foundProduces = true;
-            } else if (configuration.injectAnnotations.contains(ann.annotationType())) {
+            }
+            else if(configuration.injectAnnotations.contains(ann.annotationType())) {
                 foundInject = true;
             }
         }
@@ -326,7 +330,7 @@ class Phase1Analyzer extends PhasesBase {
                 }
             }
         } catch (NoClassDefFoundError e) {
-            logger.warn("{} analyzing producer fields of {}",e.getMessage(), c.getName());
+            logger.warn("{} analyzing producer fields of {}", e.getMessage(), c.getName());
         }
     }
 
@@ -338,7 +342,7 @@ class Phase1Analyzer extends PhasesBase {
                 }
             }
         } catch (NoClassDefFoundError e) {
-            logger.warn("{} analyzing producer Methods of {}",e.getMessage(),  c.getName());
+            logger.warn("{} analyzing producer Methods of {}", e.getMessage(), c.getName());
         }
     }
 
@@ -362,10 +366,10 @@ class Phase1Analyzer extends PhasesBase {
     }
 
     private void specializes(final Class<?> c) {
-        if (c != null && c != Object.class && !c.isInterface()) {
+        if(c != null && c != Object.class && !c.isInterface()) {
             Specializes specializesL = c.getAnnotation(Specializes.class);
             final Class<?> superclass = c.getSuperclass();
-            if (!configuration.getObligatory().contains(superclass)) {
+            if(!configuration.getObligatory().contains(superclass)) {
                 if(specializesL != null) {
                     if(configuration.isTestClass(c)) {
                         configuration.testClass(superclass);
@@ -384,8 +388,8 @@ class Phase1Analyzer extends PhasesBase {
 
     private void abstractSuperClasses(final Class<?> c) {
         final Class<?> superclass = c.getSuperclass();
-        if (!(superclass.equals(Object.class)
-              || superclass == null)) {
+        if(!(superclass.equals(Object.class)
+             || superclass == null)) {
             addToProducerMap(superclass, configuration.getProducerMap(), false);
             abstractSuperClasses(superclass);
         }
@@ -397,7 +401,7 @@ class Phase1Analyzer extends PhasesBase {
 
     private QualifiedType addToProducerMap(final Class<?> c, final ProducerMap producerMap, boolean checkAbstract) {
         final QualifiedType result = new QualifiedType(c, checkAbstract);
-        if (!Modifier.isAbstract(c.getModifiers())) {
+        if(!Modifier.isAbstract(c.getModifiers())) {
             producerMap.addToProducerMap(result);
         }
         producerFields(c, producerMap);
@@ -431,11 +435,12 @@ class Phase1Analyzer extends PhasesBase {
                         beanWithoutProducer(c);
                         final ProducerMap producerMap = configuration.getProducerMap();
                         QualifiedType q = addToProducerMap(c, producerMap);
-                        if (c.equals(configuration.getTheTestClass()) || q.isAlternative()) {
+                        if(c.equals(configuration.getTheTestClass()) || q.isAlternative()) {
                             abstractSuperClasses(c);
                         }
-                    } else if (ConfigStatics.mightSignCandidate(c)) {
-                        if (!configuration.getCandidateSigns().contains(c)) {
+                    }
+                    else if(ConfigStatics.mightSignCandidate(c)) {
+                        if(!configuration.getCandidateSigns().contains(c)) {
                             configuration.getCandidateSigns().add(c);
                             List<Class<?>> toAdd = configuration.getAvailable()
                                     .stream()
@@ -449,6 +454,9 @@ class Phase1Analyzer extends PhasesBase {
                                     .tobeStarted(c)
                                     .elseClass(c);
                         }
+                    }
+                    else if(c.isEnum() || c.isInterface() || c.isArray()) {
+                        logger.trace("ignoring {}", c);
                     }
                     else {
                         logger.trace("else but to be started {}", c);
@@ -470,9 +478,9 @@ class Phase1Analyzer extends PhasesBase {
     }
 
     private void makeAvailable(final Class<?> c) {
-        if (configuration.addAvailableInterceptorsAndDecorators) {
-            if (c.getAnnotation(Interceptor.class) != null || c.getAnnotation(Decorator.class) != null) {
-                logger.info("Flag addAvailableInterceptorsAndDecorator: {}",c);
+        if(configuration.addAvailableInterceptorsAndDecorators) {
+            if(c.getAnnotation(Interceptor.class) != null || c.getAnnotation(Decorator.class) != null) {
+                logger.info("Flag addAvailableInterceptorsAndDecorator: {}", c);
                 configuration.candidate(c);
             }
         }

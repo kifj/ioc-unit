@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.oneandone.ioc-unit</groupId>
         <artifactId>ioc-unit-parent</artifactId>
-        <version>2.0.31-SNAPSHOT</version>
+        <version>2.0.43-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -12,7 +12,7 @@
 
     <name>net.oneandone.ioc-unit:ioc-unit-ejb</name>
     <description>Allows tests based on cdi only</description>
-    <url>https://github.com/1and1/ioc-unit</url>
+    <url>https://github.com/1and1/modules/ioc-unit-ejb</url>
 
     <licenses>
         <license>
@@ -51,7 +51,13 @@
         </dependency>
         <dependency>
             <groupId>net.oneandone.ioc-unit</groupId>
-            <artifactId>ioc-unit</artifactId>
+            <artifactId>discovery-runner</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.oneandone.ioc-unit</groupId>
+            <artifactId>ioc-unit-jms</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

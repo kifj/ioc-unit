@@ -1,45 +1,18 @@
 package com.oneandone.iocunit.validate;
 
-import java.lang.annotation.Annotation;
-
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
+import javax.naming.NamingException;
 
-import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
+import com.oneandone.cdi.weldstarter.ExtensionSupport;
 
-/**
- * @author aschoerk
- */
-@ApplicationScoped
 public class ValidateTestExtension implements Extension {
 
-    private static AnnotationLiteral<ApplicationScoped> createApplicationScopedAnnotation() {
-        return new AnnotationLiteral<ApplicationScoped>() {
-            private static final long serialVersionUID = 1L;
-        };
+    public <T> void processAnnotatedType(@Observes AfterBeanDiscovery abd, BeanManager bm) throws NamingException {
+        ExtensionSupport.addTypeAfterBeanDiscovery(abd, bm, ValidationInitializer.class);
     }
 
-    public <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
-        AnnotatedType<T> annotatedType = pat.getAnnotatedType();
-        AnnotatedTypeBuilder<T> builder = new AnnotatedTypeBuilder<T>().readFromType(annotatedType);
 
-        final Class aClass = annotatedType.getJavaClass();
-        if(TestExtensionServices.testExtensionServiceData.get().contains(aClass)) {
-            if (ValidationClassFinder.getMethodValidatedAnnotation() != null) {
-                builder.addToClass(new AnnotationLiteral() {
-                    private static final long serialVersionUID = 4280858811908223334L;
-
-                    @Override
-                    public Class<? extends Annotation> annotationType() {
-                        return ValidationClassFinder.getMethodValidatedAnnotation();
-                    }
-                });
-                pat.setAnnotatedType(builder.create());
-            }
-        }
-    }
 }

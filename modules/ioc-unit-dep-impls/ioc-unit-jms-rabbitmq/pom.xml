@@ -3,7 +3,7 @@
     <parent>
         <groupId>net.oneandone.ioc-unit</groupId>
         <artifactId>ioc-unit-parent</artifactId>
-        <version>2.0.31-SNAPSHOT</version>
+        <version>2.0.43-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
@@ -12,7 +12,7 @@
 
     <name>net.oneandone.ioc-unit:ioc-unit-jms-rabbitmq</name>
     <description>Adds mockrunner jms-implementation</description>
-    <url>https://github.com/1and1/ioc-unit-dep-impls/ioc-unit-jms-rabbitmq</url>
+    <url>https://github.com/1and1/modules/ioc-unit-dep-impls/ioc-unit-jms-rabbitmq</url>
 
     <licenses>
         <license>
@@ -38,12 +38,12 @@
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>5.8.0</version>
+            <version>5.9.0</version>
         </dependency>
         <dependency>
             <groupId>com.rabbitmq.jms</groupId>
             <artifactId>rabbitmq-jms</artifactId>
-            <version>1.14.0</version>
+            <version>2.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -70,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>net.oneandone.ioc-unit</groupId>
-            <artifactId>ioc-unit-ejb</artifactId>
+            <artifactId>ioc-unit-jms</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -1,6 +1,7 @@
 package com.oneandone.iocunit.analyzer;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -34,10 +35,25 @@ public class ConfigStatics {
         return c.isAnnotation() || c.isInterface() || Modifier.isAbstract(c.getModifiers());
     }
 
+    public static boolean isInterceptable(Class<?> c) {
+        if(c.equals(Object.class)) {
+            return true;
+        }
+        if(mightBeBean(c)) {
+            for (Method m : c.getDeclaredMethods()) {
+                if(Modifier.isFinal(m.getModifiers())) {
+                    return false;
+                }
+            }
+            return isInterceptable(c.getSuperclass());
+        }
+        return false;
+    }
+
     public static boolean mightBeBean(Class<?> c) {
 
         try {
-            if(c.isInterface() || c.isPrimitive() || c.isLocalClass() || Modifier.isAbstract(c.getModifiers())
+            if(c.isInterface() || c.isPrimitive() || c.isEnum() || c.isLocalClass() || Modifier.isAbstract(c.getModifiers())
                || c.isAnonymousClass() || c.isLocalClass() || c.isAnnotation()
                || (c.getEnclosingClass() != null && !Modifier.isStatic(c.getModifiers()))
                || String.class.isAssignableFrom(c)) {
@@ -64,8 +80,8 @@ public class ConfigStatics {
             if(isExtension(c)) {
                 return false;
             }
-        } catch (NoClassDefFoundError|IncompatibleClassChangeError e) {
-            logger.warn("NoClassDefFoundError analyzing {}",c.getName());
+        } catch (NoClassDefFoundError | IncompatibleClassChangeError e) {
+            logger.warn("NoClassDefFoundError analyzing {}", c.getName());
             return false;
         }
         return true;
@@ -85,8 +101,9 @@ public class ConfigStatics {
             }
             else {
                 if(t instanceof Class) {
-                    if (((Class) t).getTypeParameters().length > 0)
+                    if(((Class) t).getTypeParameters().length > 0) {
                         return true;
+                    }
                     return isParameterizedType(((Class) t).getGenericSuperclass());
                 }
                 else {

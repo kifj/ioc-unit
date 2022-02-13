@@ -4,6 +4,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import com.oneandone.iocunit.ejb.AsynchronousManager;
+import com.oneandone.iocunit.jms.JmsSingletonsIntf;
 
 /**
  * Registered for each MessageListener, onMessage is used to register asynchronous calls in the Asynchronous Manager.
@@ -40,7 +41,6 @@ public class AsynchronousMessageListenerProxy implements MessageListener {
             @Override
             public void run() {
                 jmsSingletons.jms2OnMessage(listener, message);
-
             }
         });
     }

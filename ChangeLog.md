@@ -4,6 +4,9 @@
 
 |Version|Changes|
 |-------|-------|
+|2.0.33|regex filtering in @Sutxxx, @Testxxx, @JaxRs...|
+|2.0.32|fix for JaxRSPackagesDeep|
+|2.0.31|not usable!!! fix for JaxRSPackagesDeep, ioc-unit-resources|
 |2.0.30|JaxRSPackagesDeep, fix TransactionServices for ioc-unit-ejb, to allow transactional observers to be tested|
 |2.0.29|fix BOM for Wildfly 19|
 |2.0.28|compile modules with weld-3.1-SP1, depend on jakarta-apis|

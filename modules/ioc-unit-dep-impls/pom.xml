@@ -3,7 +3,7 @@
 
     <groupId>net.oneandone.ioc-unit</groupId>
     <artifactId>ioc-unit-dep-impls</artifactId>
-    <version>2.0.31-SNAPSHOT</version>
+    <version>2.0.43-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>ioc-unit-dependencies</name>
     <description>used to create dependency modules, not used as parent pom</description>
@@ -13,7 +13,8 @@
         <module>ioc-unit-jms-mockrunner</module>
         <module>ioc-unit-jms-rabbitmq</module>
         <module>ioc-unit-jms-activemq</module>
-        <module>ioc-unit-jta-narayana</module>
+        <module>ioc-unit-jms-artemisactivemq</module>
+        <!--module>ioc-unit-jta-narayana</module-->
     </modules>
     <build>
         <plugins>

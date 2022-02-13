@@ -4,14 +4,14 @@
     <parent>
         <groupId>net.oneandone.ioc-unit</groupId>
         <artifactId>ioc-unit-rest-examples2-parent</artifactId>
-        <version>2.0.31-SNAPSHOT</version>
+        <version>2.0.43-SNAPSHOT</version>
     </parent>
 
 
     <artifactId>minimal-rest-dto-jackson</artifactId>
     <packaging>war</packaging>
 
-    <name>examples:rest:minimal-rest-dto-jackson</name>
+    <name>samples:rest:minimal-rest-dto-jackson</name>
     <description>Testing Restassured + ioc-unit-resteasy in minimal war</description>
     <url>https://github.com/1and1/ioc-unit</url>
 
@@ -58,12 +58,6 @@
             <groupId>net.oneandone.ioc-unit</groupId>
             <artifactId>ioc-unit-resteasy</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>net.oneandone.ioc-unit</groupId>
-            <artifactId>weld2-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>

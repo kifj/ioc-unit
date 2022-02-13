@@ -4,14 +4,14 @@
     <parent>
         <groupId>net.oneandone.ioc-unit</groupId>
         <artifactId>ioc-unit-rest-examples2-parent</artifactId>
-        <version>2.0.31-SNAPSHOT</version>
+        <version>2.0.43-SNAPSHOT</version>
     </parent>
 
 
     <artifactId>minimal-resteasy2-war</artifactId>
     <packaging>war</packaging>
 
-    <name>examples:rest:minimal-resteasy2-war</name>
+    <name>samples:rest:minimal-resteasy2-war</name>
     <description>Testing Restassured + ioc-unit-resteasy2 in minimal war</description>
     <url>https://github.com/1and1/ioc-unit</url>
 
@@ -53,17 +53,10 @@
             <groupId>net.oneandone.ioc-unit</groupId>
             <artifactId>ioc-unit-resteasy</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>net.oneandone.ioc-unit</groupId>
-            <artifactId>weld1-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
