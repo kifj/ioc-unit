@@ -1,26 +1,57 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>net.oneandone.ioc-unit</groupId>
-        <artifactId>ioc-unit-parent</artifactId>
-        <version>2.0.43-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+        <parent>
+            <groupId>net.oneandone.ioc-unit</groupId>
+            <artifactId>ioc-unit-parent</artifactId>
+            <version>2.0.45-SNAPSHOT</version>
+            <relativePath>../../pom.xml</relativePath>
+        </parent>
 
 
-    <artifactId>purecdi-tests</artifactId>
+        <artifactId>purecdi-tests</artifactId>
     <packaging>jar</packaging>
 
 
     <name>testing:net.oneandone.ioc-unit:purecdi-tests</name>
     <description>Examples, how to use CDI-SE without extra framework. Only weld3!</description>
     <url>https://github.com/1and1/ioc-unit</url>
+    <profiles>
+        <profile>
+            <id>weld2.3</id>
+            <dependencies>
+                <dependency>
+                    <groupId>net.oneandone.ioc-unit</groupId>
+                    <artifactId>ioc-unit-wf10-specs</artifactId>
+                    <version>${project.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>net.oneandone.ioc-unit</groupId>
+                    <artifactId>ioc-unit-wf10</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>weld3.1</id>
+            <dependencies>
+                <dependency>
+                    <groupId>net.oneandone.ioc-unit</groupId>
+                    <artifactId>ioc-unit-wf26-specs</artifactId>
+                    <version>${project.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>net.oneandone.ioc-unit</groupId>
+                    <artifactId>ioc-unit-wf26</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
     <dependencies>
-        <!-- general apis -->
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
 
         <!-- logging -->
         <dependency>
@@ -39,21 +70,6 @@
             <version>${junit5.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- J2EE 6 -->
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.cdi-api}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.ejb</groupId>
-            <artifactId>javax.ejb-api</artifactId>
-            <version>3.2.2</version>
-            <scope>provided</scope>
-        </dependency>
-
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -65,11 +81,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>${mockito.version}</version>
         </dependency>
     </dependencies>
 

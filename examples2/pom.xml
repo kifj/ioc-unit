@@ -3,17 +3,24 @@
 
     <groupId>net.oneandone.ioc-unit</groupId>
     <artifactId>ioc-unit-examples2-parent</artifactId>
-    <version>2.0.43-SNAPSHOT</version>
+    <version>2.0.45-SNAPSHOT</version>
     <name>samples:parent</name>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <httpcore.version>4.4.1</httpcore.version>
+        <httpclient.version>4.5</httpclient.version>
+        <rest-assured.version>4.5.1</rest-assured.version>
     </properties>
 
     <profiles>
         <profile>
             <id>weld2.3</id>
+            <properties>
+                <resteasy.version>3.0.26.Final</resteasy.version>
+                <jackson2.version>2.9.10</jackson2.version>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>net.oneandone.ioc-unit</groupId>
@@ -31,27 +38,83 @@
         </profile>
         <profile>
             <id>weld3.1</id>
+            <properties>
+                <jackson2.version>2.12.3</jackson2.version>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>net.oneandone.ioc-unit</groupId>
-                    <artifactId>ioc-unit-wf24-specs</artifactId>
+                    <artifactId>ioc-unit-wf26-specs</artifactId>
                     <version>${project.version}</version>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>net.oneandone.ioc-unit</groupId>
-                    <artifactId>ioc-unit-wf24</artifactId>
+                    <artifactId>ioc-unit-wf26</artifactId>
                     <version>${project.version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>
+                    (,1.8]
+                </jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+                            <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk11ff</id>
+            <activation>
+                <jdk>
+                    [11,)
+                </jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <javax.xml.parsers.DocumentBuilderFactory>
+                                    com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl
+                                </javax.xml.parsers.DocumentBuilderFactory>
+                            </systemPropertyVariables>
+
+                            <reportFormat>plain</reportFormat>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <!-- Sets the VM argument line used when unit tests are run. -->
+                            <!--argLine> - -add-modules java.xml,java.sql -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006</argLine-->
+                            <argLine>
+                                -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 --add-opens
+                                java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED
+                            </argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <modules>
-        <!--module>ex1-1entity</module>
-        <module>ex1-1entity-el</module>
-        <module>ex1-1entity-hb</module-->
+        <module>ex1-1entity</module>
+        <!--module>ex1-1entity-el</module-->
+        <module>ex1-1entity-hb</module>
         <module>ex1-1entity5</module>
         <module>ex1-2entity4220b_5</module>
         <module>ex2-syncconsumed</module>
@@ -59,8 +122,8 @@
         <module>ex4-asyncconsumedpush</module>
         <module>mockito-example</module>
         <module>jms</module>
+        <module>rest</module>
     </modules>
-
 
     <build>
         <plugins>
@@ -79,26 +142,6 @@
                 <version>2.8.2</version>
                 <configuration>
                     <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <javax.xml.parsers.DocumentBuilderFactory>
-                            com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl
-                        </javax.xml.parsers.DocumentBuilderFactory>
-                    </systemPropertyVariables>
-
-                    <reportFormat>plain</reportFormat>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <!-- Sets the VM argument line used when unit tests are run. -->
-                    <!--argLine> - -add-modules java.xml,java.sql -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006</argLine-->
-                    <argLine>
-                        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006
-                    </argLine>
                 </configuration>
             </plugin>
         </plugins>
