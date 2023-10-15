@@ -18,6 +18,8 @@ import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.oneandone.iocunit.jtajpa.internal.ConnectionProviderBase;
 import com.oneandone.iocunit.jtajpa.internal.EntityManagerFactoryFactory;
 
+import javax.enterprise.inject.spi.CDI;
+
 /**
  * @author aschoerk
  */
@@ -27,6 +29,8 @@ public class PersistenceXmlConnectionProvider extends ConnectionProviderBase {
     private String url;
     private TransactionalDriver arjunaJDBC2Driver = null;
     private Properties dbProps = null;
+
+    private int defaultTransactionIsolation = Connection.TRANSACTION_READ_COMMITTED;
 
     public PersistenceXmlConnectionProvider() {
         String puName = EntityManagerFactoryFactory.currentPuName.get();
@@ -47,7 +51,8 @@ public class PersistenceXmlConnectionProvider extends ConnectionProviderBase {
             String password = (String) props.get("javax.persistence.jdbc.password");
             String driverName = (String) props.get("javax.persistence.jdbc.driver");
             if(driverName.equals(TestContainer.class.getName())) {
-                TestContainer testContainer = (TestContainer) System.getProperties().get(TestContainer.TESTCONTAINERINITIALIZED);
+                TestContainer testContainer = CDI.current().select(TestContainer.class).get();
+                // TestContainer testContainer = (TestContainer) System.getProperties().get(TestContainer.TESTCONTAINERINITIALIZED);
                 userName = testContainer.getUsername();
                 password = testContainer.getPassword();
                 url = testContainer.getJdbcUrl();
@@ -64,6 +69,10 @@ public class PersistenceXmlConnectionProvider extends ConnectionProviderBase {
             dbProps.put(TransactionalDriver.password, password);
             dbProps.put(TransactionalDriver.XADataSource, jdbcDataSource);
             dbProps.put(TransactionalDriver.poolConnections, "false");
+            final Object isolation = props.get("hibernate.connection.isolation");
+            if (isolation != null) {
+                dbProps.put("hibernate.connection.isolation", isolation);
+            }
 
             this.arjunaJDBC2Driver = new TransactionalDriver();
         } catch (Exception ex) {
@@ -100,6 +109,12 @@ public class PersistenceXmlConnectionProvider extends ConnectionProviderBase {
     public Connection getConnection() throws SQLException {
         Connection result;
         result = arjunaJDBC2Driver.connect("jdbc:arjuna:" + url, dbProps);
+        final String isolationLevel = dbProps.getProperty("hibernate.connection.isolation");
+        if (isolationLevel != null) {
+            result.setTransactionIsolation(Integer.parseInt(isolationLevel));
+        } else {
+            result.setTransactionIsolation(defaultTransactionIsolation);
+        }
         connectionCount.incrementAndGet();
         return result;
     }
