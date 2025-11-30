@@ -3,7 +3,7 @@
 
     <groupId>net.oneandone.ioc-unit</groupId>
     <artifactId>discovery-runner</artifactId>
-    <version>2.0.48-SNAPSHOT</version>
+    <version>2.0.51-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>net.oneandone.ioc-unit:discovery-runner</name>
     <description>Runners, Rules, Extensions used to start Junitx Tests inside a weldcontainer in discovery mode
@@ -202,7 +202,7 @@
     <distributionManagement>
         <repository>
             <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <uniqueVersion>true</uniqueVersion>
